@@ -21,7 +21,7 @@ const db = require("./app/models");
 const Role = db.role;
 
 db.mongoose
-    .connect(`mongodb://${dbConfig.HOST}:${dbConfig.PORT}/${dbConfig.DB}`, {
+    .connect(`mongodb+srv://malek:malek2021@cluster0.fbj5g.mongodb.net/food_ordering_app?retryWrites=true`, {
         useNewUrlParser: true,
         useUnifiedTopology: true
     })
