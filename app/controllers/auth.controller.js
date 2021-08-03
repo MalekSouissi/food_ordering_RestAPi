@@ -42,7 +42,7 @@ exports.signup = (req, res) => {
                             return;
                         }
 
-                        res.send(user);
+                        res.send({ message: "your account is successfully created" });
                     });
                 }
             );
@@ -60,7 +60,7 @@ exports.signup = (req, res) => {
                         return;
                     }
 
-                    res.send(user);
+                    res.send("your account is successfully created");
                 });
             });
         }
