@@ -8,5 +8,7 @@ module.exports = app => {
     router.post("/addSupplement/:id/:suppId", orderItem.addSupplement);
     router.post("/deleteSuppelement/:id/:suppId", orderItem.deleteSupp);
     router.get("/getOrderItem/:id", orderItem.findOrderItem);
+    //router.get("/getOrderItemByUserId/:userId".orderItem.getOrderItems2);
+    router.get("/getOrderItems", orderItem.findAll);
     app.use('/api/orders', router);
 };

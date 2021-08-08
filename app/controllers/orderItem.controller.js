@@ -6,6 +6,7 @@ exports.createOrderItem = (req, res) => {
 
     const orderItem = new OrderItem({
         //_id: mongoose.Types.ObjectId(),
+        userId: req.body.userId,
         qte: req.body.qte,
         food: req.body.food,
         other: req.body.other
@@ -42,6 +43,23 @@ exports.createOrderItem = (req, res) => {
     });
 
 
+};
+
+
+exports.findAll = (req, res) => {
+    //const name = req.query.name;
+    //var condition = name ? { name: { $regex: new RegExp(name), $options: "i" } } : {};
+
+    OrderItem.find()
+        .then(data => {
+            res.send(data);
+        })
+        .catch(err => {
+            res.status(500).send({
+                message:
+                    err.message || "Some error occurred while retrieving orderItems."
+            });
+        });
 };
 
 exports.addSupplement = async (req, res) => {
@@ -93,4 +111,17 @@ exports.findOrderItem = async (req, res) => {
     } catch (err) {
         res.status(400).json({ success: false, message: err.message });
     }
-}
+};
+
+/*exports.getOrderItems2 = async (req, res) => {
+    OrderItem.find({ userId: req.params.id })
+        .then(data => {
+            res.send(data);
+        })
+        .catch(err => {
+            res.status(500).send({
+                message:
+                    err.message || "Some error occurred while retrieving orderItems."
+            });
+        });
+};*/
