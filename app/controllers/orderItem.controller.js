@@ -46,15 +46,21 @@ exports.createOrderItem = (req, res) => {
 };
 
 
-exports.findOrderItems = async (req, res) => {
-    try {
-        const data = await OrderItem.find();
-        res.status(200).json({ data });
-    } catch (err) {
-        res.status(400).json({ success: false, message: err.message });
-    }
-}
+exports.findAll = (req, res) => {
+    const name = req.query.name;
+    var condition = name ? { name: { $regex: new RegExp(name), $options: "i" } } : {};
 
+    OrderItem.find(condition)
+        .then(data => {
+            res.send(data);
+        })
+        .catch(err => {
+            res.status(500).send({
+                message:
+                    err.message || "Some error occurred while retrieving foods."
+            });
+        });
+};
 exports.addSupplement = async (req, res) => {
     const suppId = req.params.suppId;
     try {
