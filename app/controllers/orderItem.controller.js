@@ -46,7 +46,7 @@ exports.createOrderItem = (req, res) => {
 };
 
 
-exports.findAll = (req, res) => {
+exports.findOrderItems = (req, res) => {
     const name = req.query.name;
     var condition = name ? { name: { $regex: new RegExp(name), $options: "i" } } : {};
 
