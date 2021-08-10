@@ -48,9 +48,8 @@ exports.createOrderItem = (req, res) => {
 
 exports.findOrderItems = async (req, res) => {
     try {
-        const data = await OrderItem.find()
-            .populate('food');
-        res.status(200).json({ success: true, data });
+        const data = await OrderItem.find();
+        res.status(200).json({ data });
     } catch (err) {
         res.status(400).json({ success: false, message: err.message });
     }
