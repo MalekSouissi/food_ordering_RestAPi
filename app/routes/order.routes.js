@@ -3,7 +3,6 @@ module.exports = app => {
 
     var router = require("express").Router();
 
-    // Create a new Tutorial
     router.post("/", orders.createOrder);
     router.post("/updateOrder/:id/:itemId", orders.deleteOrderItem);
     router.post("/addOrderItem/:id/:itemId", orders.addOrderItem);
