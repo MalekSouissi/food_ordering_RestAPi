@@ -27,4 +27,5 @@ module.exports = function (app) {
     );
 
     app.get("/api/user/:id", controller.findOne);
+    app.put("/api/userUpdate/:id", controller.update);
 };

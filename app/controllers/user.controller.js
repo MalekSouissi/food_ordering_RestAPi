@@ -35,23 +35,17 @@ exports.findOne = (req, res) => {
 exports.update = (req, res) => {
     const id = req.params.id;
 
-    User.update(req.body, {
-        where: { id: id }
-    })
-        .then(num => {
-            if (num == 1) {
-                res.send({
-                    message: "User was updated successfully."
+    User.findByIdAndUpdate(id, req.body, { useFindAndModify: false })
+        .then(data => {
+            if (!data) {
+                res.status(404).send({
+                    message: `Cannot update user with id=${id}. Maybe user was not found!`
                 });
-            } else {
-                res.send({
-                    message: `Cannot update user with id=${id}. Maybe User was not found or req.body is empty!`
-                });
-            }
+            } else res.send({ message: "user was updated successfully." });
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error updating User with id=" + id
+                message: "Error updating user with id=" + id
             });
         });
 };

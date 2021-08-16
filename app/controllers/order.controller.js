@@ -82,8 +82,10 @@ exports.deleteOrderItem = async (req, res) => {
 
 exports.findOrders = async (req, res) => {
     try {
-        const data = await Order.find()
-            .populate({ path: 'orderItems', select: "food supplements other qte" });
+        const data = await Order.find().
+            populate({ path: 'userId', select: 'username' })
+            .populate({ path: 'orderItems', populate: { path: 'food', select: 'title price points' } }).
+            populate({ path: 'orderItems', populate: { path: 'supplements', select: 'title' } });
         res.status(200).json({ success: true, data });
     } catch (err) {
         res.status(400).json({ success: false, message: err.message });
@@ -94,7 +96,7 @@ exports.findOrder = async (req, res) => {
     try {
         const data = await Order.findById(req.params.id).
             populate({ path: 'userId', select: 'username' })
-            .populate({ path: 'orderItems', populate: { path: 'food', select: 'title price' } }).
+            .populate({ path: 'orderItems', populate: { path: 'food', select: 'title price points' } }).
             populate({ path: 'orderItems', populate: { path: 'supplements', select: 'title' } });
         res.status(200).json({ success: true, data });
     } catch (err) {
