@@ -9,6 +9,6 @@ module.exports = app => {
     router.get("/getOrders", orders.findOrders);
     router.get("/getOrder/:id", orders.findOrder);
     router.get("/getUserOrder/:id", orders.findOrderByUserID);
-
+    router.put("/order/:id", orders.update);
     app.use('/api/orders', router);
 };
