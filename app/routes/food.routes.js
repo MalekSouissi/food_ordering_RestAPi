@@ -14,6 +14,7 @@ module.exports = app => {
     router.get("/123", foods.findFoods);
     // Retrieve all published foods
     router.get("/available", foods.findAllAvailable);
+    router.get("/category/:id", foods.findByCategory);
 
     // Retrieve a single Tutorial with id
     router.get("/:id", foods.findOne);

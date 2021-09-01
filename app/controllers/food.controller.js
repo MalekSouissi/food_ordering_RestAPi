@@ -194,3 +194,17 @@ exports.findAllAvailable = (req, res) => {
         });
 };
 
+// Find food by category
+exports.findByCategory = (req, res) => {
+    Food.find({ category: req.params.id })
+        .then(data => {
+            res.send(data);
+        })
+        .catch(err => {
+            res.status(500).send({
+                message:
+                    err.message || "Some error occurred while retrieving available foods."
+            });
+        });
+};
+
