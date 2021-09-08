@@ -9,38 +9,20 @@ exports.createOrderItem = (req, res) => {
         userId: req.body.userId,
         qte: req.body.qte,
         food: req.body.food,
+        supplements: req.body.supplements,
         other: req.body.other
     });
-    orderItem.save((err, orderItem) => {
-        if (err) {
-            res.status(500).send({ message: err });
-            return;
-        }
-        Supplement.find(
-            {
-                title: { $in: req.body.supplements },
-            },
-            (err, supplements) => {
-                if (err) {
-                    res.status(500).send({ message: err });
-                    return;
-                }
-
-                orderItem.supplements = supplements.map((supplement) => supplement._id);
-
-                orderItem.save((err) => {
-                    if (err) {
-                        res.status(500).send({ message: err });
-                        return;
-                    }
-
-                    res.send({ message: "Order was registered successfully!" });
-                });
-            }
-        );
-
-
-    });
+    orderItem
+        .save()
+        .then(data => {
+            res.send(data);
+        })
+        .catch(err => {
+            res.status(500).send({
+                message:
+                    err.message || "Some error occurred while creating the food."
+            });
+        });
 
 
 };
@@ -62,7 +44,7 @@ exports.findOrderItems = (req, res) => {
         });
 };
 exports.addSupplement = async (req, res) => {
-    const suppId = req.params.suppId;
+    const supplement = req.params.supp;
     try {
         //validate data as required
 
@@ -70,7 +52,7 @@ exports.addSupplement = async (req, res) => {
         //title: req.body.title,
 
         // });
-        supplement = await Supplement.findById(suppId);
+        //supplement = await Supplement.findById(suppId);
         const orderItem = await OrderItem.findById({ _id: req.params.id })
         orderItem.supplements.push(supplement);
         await orderItem.save();
@@ -86,10 +68,10 @@ exports.addSupplement = async (req, res) => {
 
 
 exports.deleteSupp = async (req, res) => {
-    const suppId = req.params.suppId;
+    const supplement = req.params.supp;
     try {
 
-        supplement = await Supplement.findById(suppId);
+        // supplement = await Supplement.findById(suppId);
         const orderItem = await OrderItem.findById({ _id: req.params.id })
         orderItem.supplements.pull(supplement);
         await orderItem.save();
@@ -103,8 +85,7 @@ exports.deleteSupp = async (req, res) => {
 exports.findOrderItem = async (req, res) => {
     try {
         const data = await OrderItem.findById(req.params.id)
-            .populate('food').
-            populate({ path: 'supplements', select: "title" });
+            .populate('food');
 
         res.status(200).json({ success: true, data });
     } catch (err) {

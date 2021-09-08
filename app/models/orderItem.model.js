@@ -17,8 +17,9 @@ const OrderItem = new Schema({
     other: String,
     supplements: [
         {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Supplement"
+            //type: mongoose.Schema.Types.ObjectId,
+            //ref: "Supplement"
+            type: String,
         }
     ]
 });
