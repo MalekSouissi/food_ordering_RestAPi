@@ -3,16 +3,20 @@ const OrderItem = require("../models/orderItem.model");
 const Supplement = require("../models/supplement.model");
 
 exports.createOrderItem = (req, res) => {
+var docsToInsert=[];
 
-    const orderItem = new OrderItem({
-        //_id: mongoose.Types.ObjectId(),
-        userId: req.body.userId,
-        qte: req.body.qte,
-        food: req.body.food,
-        supplements: req.body.supplements,
-        other: req.body.other
-    });
-    orderItem
+var i;
+for (i = 0; i < req.body.length; i++) {
+       const orderItem= new OrderItem({
+    userId:req.body[i].userId,
+food:req.body[i].food,
+supplements:req.body[i].supplements,
+qte:req.body[i].qte,
+other:req.body[i].other
+       });
+
+       // docsToInsert.push(orderItem);
+       orderItem
         .save()
         .then(data => {
             res.send(data);
@@ -23,7 +27,15 @@ exports.createOrderItem = (req, res) => {
                     err.message || "Some error occurred while creating the food."
             });
         });
+    };
 
+
+//docsToInsert.save(function (err) {
+  //if (err) return console.log(err);
+
+  //console.log('tmp saved to the database');
+
+//});
 
 };
 
