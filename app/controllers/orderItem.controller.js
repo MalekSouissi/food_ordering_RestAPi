@@ -8,7 +8,6 @@ var docsToInsert=[];
 var i;
 for (i = 0; i < req.body.length; i++) {
        const orderItem= new OrderItem({
-    userId:req.body[i].userId,
 food:req.body[i].food,
 supplements:req.body[i].supplements,
 qte:req.body[i].qte,

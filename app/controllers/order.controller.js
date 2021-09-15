@@ -2,44 +2,54 @@ const Food = require("../models/food.model");
 const OrderItem = require("../models/orderItem.model");
 const Order = require("../models/order.model");
 
-exports.createOrder = (req, res) => {
+exports.createOrder = async(req, res) => {
+var i;
+console.log(req.body.orderItems.length);
+  const userId = req.body.userId;
+ // const orderId = req.params.id;
+  try {
+   // let order = await Order.findOne({ orderId });
+   //console.log(order);
+for(i=0;i<req.body.orderItems.length;i++){
+     const orderItem= new OrderItem({
+    userId:req.body.userId,
+food:req.body.orderItems[i].food,
+supplements:req.body.orderItems[i].supplements,
+qte:req.body.orderItems[i].qte,
+other:req.body.orderItems[i].other
+       });
+    /* if (order) {
+      //cart exists for user
+      let itemIndex = order.orderItems.findIndex(p => p.food == req.body.orderItems[i].food);
 
-    const order = new Order({
-        userId: req.body.userId,
-        code: req.body.code,
-        delivery: req.body.delivery,
-        done: req.body.done,
-    });
-    order.save((err, order) => {
-        if (err) {
-            res.status(500).send({ message: err });
-            return;
-        }
-        OrderItem.find(
-            {
-                _id: { $in: req.body.orderItems },
-            },
-            (err, orderItems) => {
-                if (err) {
-                    res.status(500).send({ message: err });
-                    return;
-                }
+      if (itemIndex > -1) {
+        //product exists in the cart, update the quantity
+        let productItem = order.orderItems[itemIndex];
+        productItem.qte = req.body.orderItems[i].qte;
+        order.orderItems[itemIndex] = productItem;
+      } else {
+        //product does not exists in cart, add new item
+        order.orderItems.push(orderItem);
+      }
+      order = await order.save();
+      return res.status(201).send(order);
+    } else { */
+      //no cart for user, create new cart
+      const newOrder = await Order.create({
+        userId:userId,
+        orderItems: req.body.orderItems,
+         code: req.body.code,
+    delivery: req.body.delivery,
+    done: req.body.done,
+      });
 
-                order.orderItems = orderItems.map((orderItem) => orderItem._id);
-
-                order.save((err) => {
-                    if (err) {
-                        res.status(500).send({ message: err });
-                        return;
-                    }
-
-                    res.send({ message: "Order was registered successfully!" });
-                });
-            }
-        );
-
-
-    });
+      return res.status(201).send(newOrder);
+    }
+//}
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("Something went wrong");
+  } 
 
 };
 
@@ -67,10 +77,22 @@ exports.addOrderItem = async (req, res) => {
 
 exports.deleteOrderItem = async (req, res) => {
     const itemId = req.params.itemId;
+    var i;
+var orderItem;
     try {
-
-        orderItem = await OrderItem.findById(itemId);
         const order = await Order.findById({ _id: req.params.id })
+        console.log(order.orderItems);
+        const orderItems = order.orderItems;
+
+        //const orderItem = await orderItems.find({_id:itemId});
+       // let orderItem = order.orderItems.find(o => o._id === itemId);
+        for(i=0;i<orderItems.length;i++){
+            if(orderItems[i]._id==itemId){
+                orderItem=orderItems[i];
+                console.log(orderItem);
+            }
+        }
+        console.log(orderItem);
         order.orderItems.pull(orderItem);
         await order.save();
         res.status(200).json({ success: true, data: order })
@@ -84,8 +106,7 @@ exports.findOrders = async (req, res) => {
     try {
         const data = await Order.find().
             populate({ path: 'userId', select: 'username' })
-            .populate({ path: 'orderItems', populate: { path: 'food', select: 'title price points' } }).
-            populate({ path: 'orderItems', populate: { path: 'supplements', select: 'title' } });
+            .populate({ path: 'orderItems', populate: { path: 'food', select: 'title price points' } });
         res.status(200).json({ success: true, data });
     } catch (err) {
         res.status(400).json({ success: false, message: err.message });
@@ -96,8 +117,7 @@ exports.findOrder = async (req, res) => {
     try {
         const data = await Order.findById(req.params.id).
             populate({ path: 'userId', select: 'username' })
-            .populate({ path: 'orderItems', populate: { path: 'food', select: 'title price points' } }).
-            populate({ path: 'orderItems', populate: { path: 'supplements', select: 'title' } });
+            .populate({ path: 'orderItems', populate: { path: 'food', select: 'title price points' } })
         res.status(200).json({ success: true, data });
     } catch (err) {
         res.status(400).json({ success: false, message: err.message });

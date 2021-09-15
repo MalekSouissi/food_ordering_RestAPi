@@ -4,7 +4,6 @@ const Schema = mongoose.Schema;
 const OrderItem = new Schema({
     userId: {
         type: Schema.Types.ObjectId,
-        required: true,
         ref: "User",
     },
     food:
@@ -13,7 +12,10 @@ const OrderItem = new Schema({
         ref: "Food"
     }
     ,
-    qte: Number,
+    qte: {
+        type:Number,
+    min: [1, 'Quantity can not be less then 1.']
+    },
     other: String,
     supplements: [
         {

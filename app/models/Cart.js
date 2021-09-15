@@ -1,14 +1,11 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-let expiredAt = new Date();
 
-expiredAt.setSeconds(
-    expiredAt.getSeconds() + 3600
-);
-
+//const OrderItem = require("../models/orderItem.model");
 let OrderItem = new Schema({
     userId: {
         type: Schema.Types.ObjectId,
+        required: true,
         ref: "User",
     },
     food:
@@ -35,30 +32,23 @@ let OrderItem = new Schema({
         type: Number,
     }
 });
-const Order = new mongoose.Schema({
+
+const CartSchema = new mongoose.Schema({
     userId: {
-        type: Schema.Types.ObjectId,
-        ref: "User",
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User"
     },
-    orderItems: 
-        {
-            type: [OrderItem],
+   items: {
+    type: [OrderItem],
     default: undefined
-        }
-    ,
-
-    code: String,
-    delivery: Boolean,
-    done: Boolean,
-    deliveryDate: {
-        type: Date,
-        default: expiredAt.getTime(),
-
+  },
+    subTotal: {
+        default: 0,
+        type: Number
     },
-    createdAt: {
-        type: Date,
-        default: Date.now,
-    },
+}, 
+{
+    timestamps: true
 });
+module.exports = mongoose.model('cart', CartSchema);
 
-module.exports = mongoose.model("order", Order);
