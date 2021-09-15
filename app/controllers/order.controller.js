@@ -149,7 +149,9 @@ exports.update = (req, res) => {
 };
 
 exports.findOrderByUserID = async (req, res) => {
-    Order.find({ userId: req.params.id })
+    Order.find().
+            populate({ path: 'userId', select: 'username' })
+            .populate({ path: 'orderItems', populate: { path: 'food', select: 'title price points' } })
         .then(data => {
             res.send(data);
         })
