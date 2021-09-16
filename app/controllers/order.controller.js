@@ -200,7 +200,7 @@ exports.update = (req, res) => {
 
 exports.findOrderByUserID = async (req, res) => {
     const id= req.params.id;
-    Order.findOne({userId:id}).
+    Order.find({userId:id}).
             populate({ path: 'userId', select: 'username' })
             .populate({ path: 'orderItems', populate: { path: 'food', select: 'title price points' } })
         .then(data => {
