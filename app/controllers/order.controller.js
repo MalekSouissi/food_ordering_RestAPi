@@ -53,6 +53,57 @@ other:req.body.orderItems[i].other
 
 };
 
+exports.newOrder = async(req, res) => {
+var i;
+console.log(req.body.orderItems.length);
+  //const userId = req.body.userId;
+ const orderId = req.params.id;
+  try {
+   let order = await Order.findById({_id: orderId });
+   console.log(order);
+for(i=0;i<req.body.orderItems.length;i++){
+     const orderItem= new OrderItem({
+    userId:req.body.userId,
+food:req.body.orderItems[i].food,
+supplements:req.body.orderItems[i].supplements,
+qte:req.body.orderItems[i].qte,
+other:req.body.orderItems[i].other
+       });
+    if (order) {
+      //cart exists for user
+      let itemIndex = order.orderItems.findIndex(p => p.food == req.body.orderItems[i].food);
+
+      if (itemIndex > -1) {
+        //product exists in the cart, update the quantity
+        let productItem = order.orderItems[itemIndex];
+        productItem.qte = req.body.orderItems[i].qte;
+        order.orderItems[itemIndex] = productItem;
+      } else {
+        //product does not exists in cart, add new item
+        order.orderItems.push(orderItem);
+      }
+      order = await order.save();
+      return res.status(201).send(order);
+    } else {
+      //no cart for user, create new cart
+      const newOrder = await Order.create({
+        userId:userId,
+        orderItems: req.body.orderItems,
+         code: req.body.code,
+    delivery: req.body.delivery,
+    done: req.body.done,
+      });
+
+      return res.status(201).send(newOrder);
+    }
+}
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("Something went wrong");
+  } 
+
+};
+
 exports.addOrderItem = async (req, res) => {
     const itemId = req.params.itemId;
     try {
