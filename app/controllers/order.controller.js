@@ -212,3 +212,26 @@ exports.findOrderByUserID = async (req, res) => {
             });
         });
 }
+
+
+exports.delete = (req, res) => {
+    const id = req.params.id;
+
+    Order.findByIdAndRemove(id)
+        .then(data => {
+            if (!data) {
+                res.status(404).send({
+                    message: `Cannot delete Food with id=${id}. Maybe Food was not found!`
+                });
+            } else {
+                res.send({
+                    message: "Food was deleted successfully!"
+                });
+            }
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: "Could not delete Food with id=" + id
+            });
+        });
+};
