@@ -20,8 +20,9 @@ module.exports = function (app) {
     );
 
     app.post("/api/auth/signin", controller.signin);
-
     app.post("/api/auth/refreshtoken", controller.refreshToken);
     app.post("/api/auth/forgot", controller.ForgotPassword);
+    app.post("/api/auth/check", controller.checkUser);
+    app.post("/forgetPassword/:mail",controller.updatePassword)
     app.post("/api/auth/reset/:userId/:token", controller.ResetPassword);
 };

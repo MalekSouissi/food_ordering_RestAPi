@@ -6,6 +6,7 @@ const Joi = require("joi");
 const Token = require("../models/token");
 const crypto = require("crypto");
 let nodemailer = require('nodemailer');
+const common_methods = require('../helpers/common_methods')
 
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
@@ -228,3 +229,72 @@ exports.ResetPassword = async (req, res) => {
         console.log(error);
     }
 };
+
+exports.updatePassword = async (req, res) => {
+    const user = await User.findOne({ email: req.params.mail })
+    console.log(user);
+    try {
+        if (user) {
+            //  user found
+            const newPassword = common_methods.generateRandomPassword()
+            const updatedUser = await User.findOneAndUpdate({ email: req.params.mail }, {
+                $set: {
+                    password: newPassword.toUpperCase()
+                }
+            }, { lean: true })
+
+            if (updatedUser) {
+                //  password updated successfully
+                common_methods.sendMail(req.params.mail, newPassword.toUpperCase())
+                return res.status(201).json({
+                    ok: true,
+                    message: "MAIL_SUCCESS" + " " + newPassword.toUpperCase()
+                });
+            }
+
+        } else {
+            //  invalid mail address
+            return res.status(404).json({
+                ok: false,
+                message: "NOT_FOUND"
+            })
+        }
+    } catch (error) {
+        return res.status(500).json({
+            ok: false,
+            message: "SERVER_ERROR"
+        })
+    }
+}
+exports.checkUser = async (req, res) => {
+    try {
+        const user = await User.findOne({mail : req.body.mail});
+        if (user) {
+            //  user found
+            const match = await bcrypt.compare(req.body.password,user.password)
+            if(match) {
+                return res.status(200).json({
+                    ok: true,
+                    message: "VALID_USER"
+                })
+            } else {
+                //user found, password was wrong
+                return res.status(404).json({
+                    ok: false,
+                    message: "INVALID_USER"
+                })
+            }            
+        } else {
+            //  user not found
+            return res.status(404).json({
+                ok: false,
+                message: "INVALID_USER"
+            })
+        }
+    } catch (error) {
+        return res.status(500).json({
+            ok: false,
+            message: "SERVER_ERROR"
+        })
+    }
+}
