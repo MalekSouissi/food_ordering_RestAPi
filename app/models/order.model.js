@@ -33,6 +33,11 @@ let OrderItem = new Schema({
     total: {
         default: 0,
         type: Number,
+    },
+
+     totalPoints: {
+        default: 0,
+        type: Number,
     }
 });
 const Order = new mongoose.Schema({

@@ -17,7 +17,10 @@ for(i=0;i<req.body.orderItems.length;i++){
 food:req.body.orderItems[i].food,
 supplements:req.body.orderItems[i].supplements,
 qte:req.body.orderItems[i].qte,
-other:req.body.orderItems[i].other
+other:req.body.orderItems[i].other,
+ total:req.body.orderItems[i].qte * req.body.orderItems[i].food.price,
+  totalPoints:req.body.orderItems[i].qte * req.body.orderItems[i].food.points,
+
        });
     /* if (order) {
       //cart exists for user
@@ -66,7 +69,9 @@ exports.newOrder = async(req, res) => {
 food:req.body.food,
 supplements:req.body.supplements,
 qte:req.body.qte,
-other:req.body.other
+other:req.body.other,
+ total:req.body.qte * req.body.food.price,
+  totalPoints:req.body.qte * req.body.food.points,
        });
     if (order) {
       //cart exists for user
@@ -75,8 +80,11 @@ other:req.body.other
       if (itemIndex > -1) {
         //product exists in the cart, update the quantity
         let productItem = order.orderItems[itemIndex];
-        productItem.qte = req.body.qte;
+        productItem.qte = productItem.qte+req.body.qte;
         order.orderItems[itemIndex] = productItem;
+        order.orderItems[itemIndex].total = order.orderItems[itemIndex].qte * order.orderItems[itemIndex].food.price;
+        order.orderItems[itemIndex].totalPoints = order.orderItems[itemIndex].qte * order.orderItems[itemIndex].food.points;
+
       } else {
         //product does not exists in cart, add new item
         order.orderItems.push(orderItem);
@@ -91,6 +99,8 @@ other:req.body.other
          code: req.body.code,
     delivery: req.body.delivery,
     done: req.body.done,
+           
+
       });
 
       return res.status(201).send(newOrder);
