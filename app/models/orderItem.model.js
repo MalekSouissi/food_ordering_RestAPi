@@ -23,7 +23,16 @@ const OrderItem = new Schema({
             //ref: "Supplement"
             type: String,
         }
-    ]
+    ],
+    total: {
+        default: 0,
+        type: Number,
+    },
+
+     totalPoints: {
+        default: 0,
+        type: Number,
+    }
 });
 
 module.exports = mongoose.model("orderItem", OrderItem);

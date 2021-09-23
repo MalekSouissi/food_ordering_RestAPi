@@ -7,21 +7,25 @@ exports.createOrder = async(req, res) => {
 var i;
 console.log(req.body.orderItems.length);
   const userId = req.body.userId;
+  var container=[];
  // const orderId = req.params.id;
   try {
    // let order = await Order.findOne({ orderId });
    //console.log(order);
 for(i=0;i<req.body.orderItems.length;i++){
-     const orderItem= new OrderItem({
-    userId:req.body.userId,
-food:req.body.orderItems[i].food,
-supplements:req.body.orderItems[i].supplements,
-qte:req.body.orderItems[i].qte,
-other:req.body.orderItems[i].other,
- total:req.body.orderItems[i].qte * req.body.orderItems[i].food.price,
-  totalPoints:req.body.orderItems[i].qte * req.body.orderItems[i].food.points,
-
-       });
+   // console.log(req.body.orderItems[i].qte);
+     let productDetails = await Food.findById(req.body.orderItems[i].food);
+    // console.log(productDetails.price*req.body.orderItems[i].qte);
+     const orderItem= new OrderItem();
+      orderItem.userId=req.body.userId,
+orderItem.food=req.body.orderItems[i].food,
+orderItem.supplements=req.body.orderItems[i].supplements,
+orderItem.qte=req.body.orderItems[i].qte,
+orderItem.other=req.body.orderItems[i].other,
+orderItem.total=req.body.orderItems[i].qte * productDetails.price;
+orderItem.totalPoints=req.body.orderItems[i].qte * productDetails.points,
+console.log(orderItem);
+       container.push(orderItem);
     /* if (order) {
       //cart exists for user
       let itemIndex = order.orderItems.findIndex(p => p.food == req.body.orderItems[i].food);
@@ -39,16 +43,17 @@ other:req.body.orderItems[i].other,
       return res.status(201).send(order);
     } else { */
       //no cart for user, create new cart
-      const newOrder = await Order.create({
+      
+    }
+    const newOrder = await Order.create({
         userId:userId,
-        orderItems: req.body.orderItems,
+        orderItems: container,
          code: req.body.code,
     delivery: req.body.delivery,
     done: req.body.done,
       });
 
       return res.status(201).send(newOrder);
-    }
 //}
   } catch (err) {
     console.log(err);
